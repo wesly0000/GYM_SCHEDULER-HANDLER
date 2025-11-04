@@ -13,7 +13,6 @@ WORKOUTS = {
 
 SETTINGS_FILE = "gym_settings.json"
 
-
 def load_last_mode():
     """Load last workout mode (4 or 6 days) from file"""
     if os.path.exists(SETTINGS_FILE):
@@ -63,23 +62,19 @@ def send_notif(pb, workout, mode):
 
 
 def main():
-    API_KEY = api.API_KEY[0]  # using your first key
-    pb = Pushbullet(API_KEY)
-
-    # Load or get new mode
-    mode = load_last_mode()
-    print(f"Loaded previous mode: {mode}-day plan")
-
-    new_mode = get_latest_command(pb)
-    if new_mode:
-        mode = new_mode
-        save_mode(mode)
-        pb.push_note("Gym Notifier", f"✅ Plan updated to {mode}-day workout schedule!")
-        print(f"Updated plan to {mode}-day routine")
-
-    # Determine today’s workout
-    workout = get_today_workout(mode)
-    send_notif(pb, workout, mode)
+    for key in api.API_KEY:
+        pb = Pushbullet(key)
+        mode = load_last_mode()
+        print(f"Loaded previous mode: {mode}-day plan")
+        new_mode = get_latest_command(pb)
+        if new_mode:
+            mode = new_mode
+            save_mode(mode)
+            pb.push_note("Gym Notifier", f"✅ Plan updated to {mode}-day workout schedule!")
+            print(f"Updated plan to {mode}-day routine")
+        # Determine today’s workout
+        workout = get_today_workout(mode)
+        send_notif(pb, workout, mode)
 
 
 if __name__ == "__main__":
